@@ -3,6 +3,8 @@ import sys
 from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QVBoxLayout , QPushButton
 from PyQt5.QtCore import QTime , QTimer , Qt
 
+
+#add the grid layout and using row span in the first coloumn add the clock time function then in second coloumn add timer and then in the third one add the button and then the text area 
 class DigitalClock(QWidget):
     def __init__(self):
         super().__init__()
