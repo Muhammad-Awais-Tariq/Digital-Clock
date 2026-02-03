@@ -30,11 +30,42 @@ class DigitalClock(QWidget):
         self.setLayout(grid)
         self.time_label.setAlignment(Qt.AlignCenter)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #020617;
+            }
+
+            QLabel {
+                color: white;
+            }
+
+            QPushButton {
+                background-color: #16a34a;
+                color: white;
+                border-radius: 22px;
+                padding: 10px;
+            }
+
+            QPushButton:hover {
+                background-color: #15803d;
+            }
+
+            QPushButton:pressed {
+                background-color: #166534;
+            }
+
+            QTextEdit {
+                background-color: #0f172a;
+                color: #e5e7eb;
+                border-radius: 10px;
+                padding: 15px;
+            }
+        """)
         self.time_label.setStyleSheet("font-size : 150px;"
                                       )
-        self.name_label.setStyleSheet("font-size : 100px;"
-                                      "font-family : Arial;"
-                                      )   
+        self.name_label.setStyleSheet(
+            "font-size: 100px;"
+        )
         self.button.setStyleSheet("font-size : 100px;"
                                     "font-family : Arial;"
                                       ) 
