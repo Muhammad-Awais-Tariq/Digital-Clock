@@ -2,6 +2,7 @@ from datetime import datetime
 import sys
 from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QVBoxLayout , QPushButton
 from PyQt5.QtCore import QTime , QTimer , Qt
+from PyQt5.QtGui import QFont , QFontDatabase
 
 
 #add the grid layout and using row span in the first coloumn add the clock time function then in second coloumn add timer and then in the third one add the button and then the text area 
@@ -15,14 +16,17 @@ class DigitalClock(QWidget):
     def initUI(self):
         self.setWindowTitle("Digital Clock")
         self.setGeometry(700 , 250 , 500 , 500)
-
         vbox = QVBoxLayout()
         vbox.addWidget(self.time_label)
         self.setLayout(vbox)
         self.time_label.setAlignment(Qt.AlignCenter)
         self.time_label.setStyleSheet("font-size : 150px;"
-                                      "font-family : Arial;"
                                       )
+        
+        font_id = QFontDatabase.addApplicationFont("DS-DIGIT.TTF")
+        font_faimly = QFontDatabase.applicationFontFamilies(font_id)[0]
+        my_font = QFont(font_faimly , 150)
+        self.time_label.setFont(my_font)
         self.timer.timeout.connect(self.updatetime)
         self.timer.start(1000)
         self.updatetime()
