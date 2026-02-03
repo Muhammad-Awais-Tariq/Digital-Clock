@@ -61,16 +61,11 @@ class DigitalClock(QWidget):
                 padding: 15px;
             }
         """)
-        self.time_label.setStyleSheet("font-size : 150px;"
-                                      )
-        self.name_label.setStyleSheet(
-            "font-size: 100px;"
-        )
-        self.button.setStyleSheet("font-size : 100px;"
-                                    "font-family : Arial;"
-                                      ) 
-        self.textbox.setStyleSheet("font-size : 50px;"
-                                    "font-family : Arial;")   
+        self.time_label.setStyleSheet("font-size : 150px;"  )
+        self.name_label.setFont(QFont("Comic Sans MS", 100))
+        self.button.setFont(QFont("Arial", 60))
+        self.textbox.setFont(QFont("Courier New", 40))
+  
         self.button.clicked.connect(self.event_finder)     
         grid.setRowStretch(0, 0)   
         grid.setRowStretch(1, 0)   
