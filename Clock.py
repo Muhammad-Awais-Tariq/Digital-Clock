@@ -1,6 +1,6 @@
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPushButton , QTextEdit
+from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPushButton , QTextEdit , QTabWidget
 from PyQt5.QtCore import  QTimer , Qt
 from PyQt5.QtGui import QFont , QFontDatabase , QIcon
 
@@ -12,25 +12,46 @@ class DigitalClock(QWidget):
         self.name_label = QLabel("Clock: ")
         self.button = QPushButton("Event" , self)
         self.textbox = QTextEdit()
+        self.tabs = QTabWidget()
+        self.tab1 = QWidget()
+        self.tab2 = QWidget()
+        self.tab3 = QWidget()
+        self.tab4 = QWidget()       
+        self.tabs.addTab(self.tab1, "Digital Clock")
+        self.tabs.addTab(self.tab2, "Stop Watch")
+        self.tabs.addTab(self.tab3, "Alarm Clock")
+        self.tabs.addTab(self.tab4, "Reminder")
         self.timer = QTimer(self)
         self.initUI()
 
 
     def initUI(self):
+        tablayout = QGridLayout(self.tab1)
+        tablayout2 = QGridLayout(self.tab2)
+        tablayout3 = QGridLayout(self.tab3)
+        tablayout4 = QGridLayout(self.tab4)
         self.setWindowTitle("Digital Clock")
         self.setWindowIcon(QIcon("image.png"))
         self.setGeometry(0 , 0 ,1000 , 600)
         self.textbox.setText("Events will appear here")
         self.textbox.setReadOnly(True)
         grid = QGridLayout()
-        grid.addWidget(self.name_label , 0 , 0 , 1 , 2)
-        grid.addWidget(self.time_label,  1,  0,  1,  3)
-        grid.addWidget(self.button ,     2 , 0 , 1 , 1 )
-        grid.addWidget(self.textbox ,    3 , 0  , 3, 3)
+        grid.addWidget(self.tabs)
+        tablayout.addWidget(self.name_label , 0 , 0 , 1 , 2)
+        tablayout.addWidget(self.time_label,  1,  0,  1,  3)
+        tablayout.addWidget(self.button ,     2 , 0 , 1 , 1 )
+        tablayout.addWidget(self.textbox ,    3 , 0  , 3, 3)
         self.setLayout(grid)
         self.time_label.setAlignment(Qt.AlignCenter)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.setStyleSheet("""
+            QTabBar::tab{
+                    height : 30px;
+                    width : 244px; 
+                    font-family: Comic Sans MS;
+                    font-size : px       
+                          
+                           }
             QWidget {
                 background-color: #020617;
             }
