@@ -3,6 +3,7 @@ import sys
 from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPushButton , QTextEdit , QTabWidget , QComboBox , QSizePolicy
 from PyQt5.QtCore import  QTimer , Qt , QTime
 from PyQt5.QtGui import QFont , QFontDatabase , QIcon
+import pygame
 
 
 class DigitalClock(QWidget):
@@ -12,6 +13,7 @@ class DigitalClock(QWidget):
         self.stopwatch_timer = QTimer(self)
         self.time = QTime(0 , 0 , 0 , 0 )
         self.hour_box = QComboBox()
+        self.alarm_time = None
        
         self.minute_box = QComboBox()
         self.ampm_box = QComboBox()
@@ -89,6 +91,7 @@ class DigitalClock(QWidget):
             QComboBox {
                 background-color: #0f172a;
                 color: #e5e7eb;
+                font-family: Comic Sans MS;
                 border: 2px solid #38bdf8;
                 border-radius: 8px;
                 padding: 6px 10px;
@@ -211,8 +214,11 @@ class DigitalClock(QWidget):
         self.stop_button.clicked.connect(self.stop)
         self.reset_button.clicked.connect(self.reset)
         self.stopwatch_timer.timeout.connect(self.update_display)
+        self.set_alarm.clicked.connect(self.setting_alarm)
+        self.stop_alarm.clicked.connect(self.stopsound)
 
-
+        pygame.mixer.init()
+        self.sound = pygame.mixer.Sound("Alarm-sound.wav")
 
     def start(self):
         if not self.stopwatch_timer.isActive():
@@ -237,10 +243,25 @@ class DigitalClock(QWidget):
             self.time = self.time.addMSecs(10)
             self.time_label2.setText(self.format_time(self.time))
 
+    def setting_alarm(self):
+        hours = self.hour_box.currentText()
+        minutes = self.minute_box.currentText()
+        ampm = self.ampm_box.currentText()
+        self.alarm_time = f"{hours:02}:{minutes:02}:00 {ampm}"            
+
 
     def updatetime(self):
         self.current = datetime.now().strftime("%I:%M:%S %p")
         self.time_label.setText(self.current)
+        if self.alarm_time and self.current == self.alarm_time:
+            self.sound.play()
+
+    def stopsound(self):
+        self.sound.stop()
+
+
+        
+
 
 
     def event_finder(self):
