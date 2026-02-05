@@ -1,6 +1,6 @@
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPushButton , QTextEdit , QTabWidget
+from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPushButton , QTextEdit , QTabWidget , QComboBox , QSizePolicy
 from PyQt5.QtCore import  QTimer , Qt , QTime
 from PyQt5.QtGui import QFont , QFontDatabase , QIcon
 
@@ -10,10 +10,22 @@ class DigitalClock(QWidget):
         super().__init__()
         self.clock_timer = QTimer(self)
         self.stopwatch_timer = QTimer(self)
-
+        self.time = QTime(0 , 0 , 0 , 0 )
+        self.hour_box = QComboBox()
+       
+        self.minute_box = QComboBox()
+        self.ampm_box = QComboBox()
         self.time_label = QLabel(self)
         self.name_label = QLabel("Clock: ")
+        self.name_labe2 = QLabel("StopWatch: ")
+        self.time_label2 = QLabel("00:00:00:00" , self)
+        self.name_label3 = QLabel("Set Alarm: ")
         self.button = QPushButton("Event" , self)
+        self.start_button = QPushButton("Start" , self)
+        self.stop_button = QPushButton("Stop" , self)
+        self.reset_button = QPushButton("Reset" , self)
+        self.set_alarm = QPushButton("Set Alarm " , self)
+        self.stop_alarm = QPushButton("Stop Alarm" , self)
         self.textbox = QTextEdit()
         self.tabs = QTabWidget()
         self.tab1 = QWidget()
@@ -24,12 +36,6 @@ class DigitalClock(QWidget):
         self.tabs.addTab(self.tab2, "Stop Watch")
         self.tabs.addTab(self.tab3, "Alarm")
         self.tabs.addTab(self.tab4, "Reminder")
-        self.name_labe2 = QLabel("StopWatch: ")
-        self.time = QTime(0 , 0 , 0 , 0 )
-        self.time_label2 = QLabel("00:00:00:00" , self)
-        self.start_button = QPushButton("Start" , self)
-        self.stop_button = QPushButton("Stop" , self)
-        self.reset_button = QPushButton("Reset" , self)
         self.initUI()
 
 
@@ -47,21 +53,76 @@ class DigitalClock(QWidget):
         grid = QGridLayout()
         grid.addWidget(self.tabs)
 
+        self.hour_box.addItems([f"{i:02d}" for i in range(1, 13)])
+        self.minute_box.addItems([f"{n:02}" for n in range(60)])
+        self.ampm_box.addItems(["AM" , "PM"])
+
         tablayout.addWidget(self.name_label , 0 , 0 , 1 , 2)
         tablayout.addWidget(self.time_label,  1,  0,  1,  3)
         tablayout.addWidget(self.button ,     2 , 0 , 1 , 1 )
         tablayout.addWidget(self.textbox ,    3 , 0  , 3, 3)
+
         tablayout2.addWidget(self.name_labe2 , 0 , 0 ,1 , 2 )
         tablayout2.addWidget(self.time_label2 , 1 , 0 ,1 , 3 )
         tablayout2.addWidget(self.start_button , 2 , 0 ,1 , 1 )
         tablayout2.addWidget(self.stop_button , 2 , 1 ,1 , 1 )
         tablayout2.addWidget(self.reset_button , 2 , 2 ,1 , 1 )
+
+        tablayout3.addWidget(self.name_label3, 0, 0, 1, 3)
+        tablayout3.addWidget(self.hour_box,     1, 0)
+        tablayout3.addWidget(self.minute_box,   1, 1)
+        tablayout3.addWidget(self.ampm_box,     1, 2)
+        tablayout3.addWidget(self.set_alarm,    2, 0)
+        tablayout3.addWidget(self.stop_alarm,   2, 2)
+
+        tablayout3.setContentsMargins(0, 0, 0, 0)
+        tablayout3.setVerticalSpacing(12)
+
+        self.name_label3.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
+        self.name_label3.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
         self.setLayout(grid)
         self.time_label.setAlignment(Qt.AlignCenter)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.name_labe2.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.time_label2.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.setStyleSheet("""
+            QComboBox {
+                background-color: #0f172a;
+                color: #e5e7eb;
+                border: 2px solid #38bdf8;
+                border-radius: 8px;
+                padding: 6px 10px;
+                min-width: 80px;
+            }
+
+            QComboBox:hover {
+                border-color: #7dd3fc;
+            }
+
+            QComboBox::drop-down {
+                width: 30px;
+                background-color: #020617;
+                border-left: 1px solid #38bdf8;
+            }
+
+            QComboBox QAbstractItemView {
+                background-color: #020617;
+                color: #e5e7eb;
+                border: 2px solid #38bdf8;
+                selection-background-color: #38bdf8;
+                selection-color: #020617;
+            }
+
+            QComboBox QAbstractItemView::item {
+                height: 30px;
+            }
+
+            QComboBox QAbstractItemView::item:hover {
+                background-color: #1e293b;
+            }
+  
+                           
+
             QTabBar::tab{
                     height : 30px;
                     width : 244px; 
@@ -111,11 +172,17 @@ class DigitalClock(QWidget):
         self.time_label2.setStyleSheet("font-size : 150px;"  )
         self.name_label.setFont(QFont("Comic Sans MS", 100))
         self.name_labe2.setFont(QFont("Comic Sans MS", 90))
+        self.name_label3.setFont(QFont("Comic Sans MS", 90))
         self.name_labe2.setStyleSheet("padding: 5px;")
         self.button.setFont(QFont("Arial", 60))
         self.start_button.setFont(QFont("Arial", 60))
         self.stop_button.setFont(QFont("Arial", 60))
         self.reset_button.setFont(QFont("Arial", 60))
+        self.hour_box.setFont(QFont("Arial", 40))
+        self.minute_box.setFont(QFont("Arial", 40))
+        self.ampm_box.setFont(QFont("Arial", 40))
+        self.set_alarm.setFont(QFont("Arial", 30))
+        self.stop_alarm.setFont(QFont("Arial", 30))
         self.textbox.setFont(QFont("Courier New", 40))
   
         self.button.clicked.connect(self.event_finder)  
@@ -127,6 +194,11 @@ class DigitalClock(QWidget):
         grid.setRowStretch(5, 0)  
         grid.setRowStretch(6, 0)  
         grid.setRowStretch(7, 1)  
+
+        tablayout3.setRowStretch(0 , 0)
+        tablayout3.setRowStretch(1, 0)   
+        tablayout3.setRowStretch(2, 0) 
+        tablayout3.setRowStretch(3, 0)                  
 
    
         
