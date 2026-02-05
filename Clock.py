@@ -8,6 +8,9 @@ from PyQt5.QtGui import QFont , QFontDatabase , QIcon
 class DigitalClock(QWidget):
     def __init__(self):
         super().__init__()
+        self.clock_timer = QTimer(self)
+        self.stopwatch_timer = QTimer(self)
+
         self.time_label = QLabel(self)
         self.name_label = QLabel("Clock: ")
         self.button = QPushButton("Event" , self)
@@ -16,18 +19,17 @@ class DigitalClock(QWidget):
         self.tab1 = QWidget()
         self.tab2 = QWidget()
         self.tab3 = QWidget()
-        self.tab4 = QWidget()       
+        self.tab4 = QWidget()     
         self.tabs.addTab(self.tab1, "Digital Clock")
         self.tabs.addTab(self.tab2, "Stop Watch")
         self.tabs.addTab(self.tab3, "Alarm")
         self.tabs.addTab(self.tab4, "Reminder")
         self.name_labe2 = QLabel("StopWatch: ")
-        self.timer = QTimer(self)
         self.time = QTime(0 , 0 , 0 , 0 )
         self.time_label2 = QLabel("00:00:00:00" , self)
         self.start_button = QPushButton("Start" , self)
         self.stop_button = QPushButton("Stop" , self)
-        self.restart_button = QPushButton("Reset" , self)
+        self.reset_button = QPushButton("Reset" , self)
         self.initUI()
 
 
@@ -53,7 +55,7 @@ class DigitalClock(QWidget):
         tablayout2.addWidget(self.time_label2 , 1 , 0 ,1 , 3 )
         tablayout2.addWidget(self.start_button , 2 , 0 ,1 , 1 )
         tablayout2.addWidget(self.stop_button , 2 , 1 ,1 , 1 )
-        tablayout2.addWidget(self.restart_button , 2 , 2 ,1 , 1 )
+        tablayout2.addWidget(self.reset_button , 2 , 2 ,1 , 1 )
         self.setLayout(grid)
         self.time_label.setAlignment(Qt.AlignCenter)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
@@ -101,6 +103,10 @@ class DigitalClock(QWidget):
                 padding: 15px;
             }
         """)
+        self.clock_timer.timeout.connect(self.updatetime)
+        self.clock_timer.start(1000)
+        self.updatetime()
+
         self.time_label.setStyleSheet("font-size : 150px;"  )
         self.time_label2.setStyleSheet("font-size : 150px;"  )
         self.name_label.setFont(QFont("Comic Sans MS", 100))
@@ -109,7 +115,7 @@ class DigitalClock(QWidget):
         self.button.setFont(QFont("Arial", 60))
         self.start_button.setFont(QFont("Arial", 60))
         self.stop_button.setFont(QFont("Arial", 60))
-        self.restart_button.setFont(QFont("Arial", 60))
+        self.reset_button.setFont(QFont("Arial", 60))
         self.textbox.setFont(QFont("Courier New", 40))
   
         self.button.clicked.connect(self.event_finder)  
@@ -129,9 +135,35 @@ class DigitalClock(QWidget):
         my_font = QFont(font_faimly , 150)
         self.time_label.setFont(my_font)
         self.time_label2.setFont(my_font)
-        self.timer.timeout.connect(self.updatetime)
-        self.timer.start(1000)
-        self.updatetime()
+        self.start_button.clicked.connect(self.start)
+        self.stop_button.clicked.connect(self.stop)
+        self.reset_button.clicked.connect(self.reset)
+        self.stopwatch_timer.timeout.connect(self.update_display)
+
+
+
+    def start(self):
+        if not self.stopwatch_timer.isActive():
+            self.stopwatch_timer.start(10)
+        
+    def stop(self):
+            self.stopwatch_timer.stop()
+
+    def reset(self):
+            self.stopwatch_timer.stop()
+            self.time = QTime(0 , 0 ,0 ,0)
+            self.time_label2.setText(self.format_time(self.time))
+
+    def format_time(self , time ):
+            hours = time.hour()
+            minutes = time.minute()
+            seconds = time.second()
+            milliseconds = time.msec() // 10
+            return f"{hours:02}:{minutes:02}:{seconds:02}.{milliseconds:02}"
+        
+    def update_display(self):
+            self.time = self.time.addMSecs(10)
+            self.time_label2.setText(self.format_time(self.time))
 
 
     def updatetime(self):
