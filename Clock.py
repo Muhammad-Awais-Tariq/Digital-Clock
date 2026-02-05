@@ -32,7 +32,8 @@ class DigitalClock(QWidget):
         tablayout4 = QGridLayout(self.tab4)
         self.setWindowTitle("Digital Clock")
         self.setWindowIcon(QIcon("image.png"))
-        self.setGeometry(0 , 0 ,1000 , 600)
+        self.setGeometry(0 , 0 ,1000 , 750)
+        self.setFixedSize(1000 , 750)
         self.textbox.setText("Events will appear here")
         self.textbox.setReadOnly(True)
         grid = QGridLayout()
@@ -44,15 +45,20 @@ class DigitalClock(QWidget):
         self.setLayout(grid)
         self.time_label.setAlignment(Qt.AlignCenter)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.tab2.setStyleSheet("background-color: #020617;")
         self.setStyleSheet("""
             QTabBar::tab{
                     height : 30px;
                     width : 244px; 
                     font-family: Comic Sans MS;
-                    font-size : px       
+                    font-size : 10 px       
                           
-                           }
-            QWidget {
+           }
+                QTabWidget::pane {
+                    background-color: hsl(229, 84%, 5%);
+                    border: none;
+            }
+                QWidget {
                 background-color: #020617;
             }
 
