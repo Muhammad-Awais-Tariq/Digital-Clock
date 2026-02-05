@@ -1,7 +1,7 @@
 from datetime import datetime
 import sys
 from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPushButton , QTextEdit , QTabWidget
-from PyQt5.QtCore import  QTimer , Qt
+from PyQt5.QtCore import  QTimer , Qt , QTime
 from PyQt5.QtGui import QFont , QFontDatabase , QIcon
 
 
@@ -19,9 +19,15 @@ class DigitalClock(QWidget):
         self.tab4 = QWidget()       
         self.tabs.addTab(self.tab1, "Digital Clock")
         self.tabs.addTab(self.tab2, "Stop Watch")
-        self.tabs.addTab(self.tab3, "Alarm Clock")
+        self.tabs.addTab(self.tab3, "Alarm")
         self.tabs.addTab(self.tab4, "Reminder")
+        self.name_labe2 = QLabel("StopWatch: ")
         self.timer = QTimer(self)
+        self.time = QTime(0 , 0 , 0 , 0 )
+        self.time_label2 = QLabel("00:00:00:00" , self)
+        self.start_button = QPushButton("Start" , self)
+        self.stop_button = QPushButton("Stop" , self)
+        self.restart_button = QPushButton("Reset" , self)
         self.initUI()
 
 
@@ -38,14 +44,21 @@ class DigitalClock(QWidget):
         self.textbox.setReadOnly(True)
         grid = QGridLayout()
         grid.addWidget(self.tabs)
+
         tablayout.addWidget(self.name_label , 0 , 0 , 1 , 2)
         tablayout.addWidget(self.time_label,  1,  0,  1,  3)
         tablayout.addWidget(self.button ,     2 , 0 , 1 , 1 )
         tablayout.addWidget(self.textbox ,    3 , 0  , 3, 3)
+        tablayout2.addWidget(self.name_labe2 , 0 , 0 ,1 , 2 )
+        tablayout2.addWidget(self.time_label2 , 1 , 0 ,1 , 3 )
+        tablayout2.addWidget(self.start_button , 2 , 0 ,1 , 1 )
+        tablayout2.addWidget(self.stop_button , 2 , 1 ,1 , 1 )
+        tablayout2.addWidget(self.restart_button , 2 , 2 ,1 , 1 )
         self.setLayout(grid)
         self.time_label.setAlignment(Qt.AlignCenter)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
-        self.tab2.setStyleSheet("background-color: #020617;")
+        self.name_labe2.setAlignment(Qt.AlignLeft | Qt.AlignTop)
+        self.time_label2.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.setStyleSheet("""
             QTabBar::tab{
                     height : 30px;
@@ -89,11 +102,17 @@ class DigitalClock(QWidget):
             }
         """)
         self.time_label.setStyleSheet("font-size : 150px;"  )
+        self.time_label2.setStyleSheet("font-size : 150px;"  )
         self.name_label.setFont(QFont("Comic Sans MS", 100))
+        self.name_labe2.setFont(QFont("Comic Sans MS", 90))
+        self.name_labe2.setStyleSheet("padding: 5px;")
         self.button.setFont(QFont("Arial", 60))
+        self.start_button.setFont(QFont("Arial", 60))
+        self.stop_button.setFont(QFont("Arial", 60))
+        self.restart_button.setFont(QFont("Arial", 60))
         self.textbox.setFont(QFont("Courier New", 40))
   
-        self.button.clicked.connect(self.event_finder)     
+        self.button.clicked.connect(self.event_finder)  
         grid.setRowStretch(0, 0)   
         grid.setRowStretch(1, 0)   
         grid.setRowStretch(2, 0) 
@@ -102,12 +121,14 @@ class DigitalClock(QWidget):
         grid.setRowStretch(5, 0)  
         grid.setRowStretch(6, 0)  
         grid.setRowStretch(7, 1)  
+
    
         
         font_id = QFontDatabase.addApplicationFont("DS-DIGIT.TTF")
         font_faimly = QFontDatabase.applicationFontFamilies(font_id)[0]
         my_font = QFont(font_faimly , 150)
         self.time_label.setFont(my_font)
+        self.time_label2.setFont(my_font)
         self.timer.timeout.connect(self.updatetime)
         self.timer.start(1000)
         self.updatetime()
