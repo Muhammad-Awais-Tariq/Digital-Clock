@@ -1,6 +1,6 @@
 from datetime import datetime
 import sys
-from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPushButton , QTextEdit , QTabWidget , QComboBox , QSizePolicy
+from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPushButton , QTextEdit , QTabWidget , QComboBox , QSizePolicy , QLineEdit
 from PyQt5.QtCore import  QTimer , Qt , QTime
 from PyQt5.QtGui import QFont , QFontDatabase , QIcon
 import pygame
@@ -22,6 +22,12 @@ class DigitalClock(QWidget):
         self.name_labe2 = QLabel("StopWatch: ")
         self.time_label2 = QLabel("00:00:00:00" , self)
         self.name_label3 = QLabel("Set Alarm: ")
+        self.name_label4 = QLabel("Set Reminder: ")
+        self.line_edit = QLineEdit()
+        self.hour_reminder = QComboBox()
+        self.minute_reminder = QComboBox()
+        self.ampm_reminder = QComboBox()
+        self.set_reminder_button = QPushButton("Set Reminder" , self)
         self.button = QPushButton("Event" , self)
         self.start_button = QPushButton("Start" , self)
         self.stop_button = QPushButton("Stop" , self)
@@ -59,6 +65,10 @@ class DigitalClock(QWidget):
         self.minute_box.addItems([f"{n:02}" for n in range(60)])
         self.ampm_box.addItems(["AM" , "PM"])
 
+        self.hour_reminder.addItems([f"{i:02d}" for i in range(1, 13)])
+        self.minute_reminder.addItems([f"{n:02}" for n in range(60)])
+        self.ampm_reminder.addItems(["AM" , "PM"])
+
         tablayout.addWidget(self.name_label , 0 , 0 , 1 , 2)
         tablayout.addWidget(self.time_label,  1,  0,  1,  3)
         tablayout.addWidget(self.button ,     2 , 0 , 1 , 1 )
@@ -77,17 +87,45 @@ class DigitalClock(QWidget):
         tablayout3.addWidget(self.set_alarm,    2, 0)
         tablayout3.addWidget(self.stop_alarm,   2, 2)
 
+        tablayout4.addWidget(self.name_label4 , 0 , 0 , 1 , 3)
+        tablayout4.addWidget(self.line_edit , 1 , 0 , 1 , 3)        
+        tablayout4.addWidget(self.hour_reminder , 2 , 0 )
+        tablayout4.addWidget(self.minute_reminder , 2 , 1)
+        tablayout4.addWidget(self.ampm_reminder , 2 , 2 )
+        tablayout4.addWidget(self.set_reminder_button , 3 , 0 , 1 , 3)
+
+
         tablayout3.setContentsMargins(0, 0, 0, 0)
         tablayout3.setVerticalSpacing(12)
 
+        tablayout4.setContentsMargins(0, 0, 0, 0)
+        tablayout4.setVerticalSpacing(12)
+                                      
         self.name_label3.setAlignment(Qt.AlignLeft | Qt.AlignBottom)
         self.name_label3.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        self.line_edit.setSizePolicy(
+            QSizePolicy.Expanding,
+            QSizePolicy.Fixed
+        )
+        self.line_edit.setMinimumHeight(200)
         self.setLayout(grid)
         self.time_label.setAlignment(Qt.AlignCenter)
         self.name_label.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.name_labe2.setAlignment(Qt.AlignLeft | Qt.AlignTop)
         self.time_label2.setAlignment(Qt.AlignHCenter | Qt.AlignTop)
         self.setStyleSheet("""
+           QLineEdit {
+                background-color: #222;
+                color: white;
+                border: 2px solid #444;
+                border-radius: 10px;
+                padding: 6px 10px 4px 10px;
+                font-size: 25px;
+            }
+
+            QLineEdit:focus {
+                border: 2px solid #00ffcc;
+            }
             QComboBox {
                 background-color: #0f172a;
                 color: #e5e7eb;
@@ -176,8 +214,13 @@ class DigitalClock(QWidget):
         self.name_label.setFont(QFont("Comic Sans MS", 100))
         self.name_labe2.setFont(QFont("Comic Sans MS", 90))
         self.name_label3.setFont(QFont("Comic Sans MS", 90))
+        self.name_label4.setFont(QFont("Comic Sans MS", 90))
         self.name_labe2.setStyleSheet("padding: 5px;")
         self.button.setFont(QFont("Arial", 60))
+        self.set_reminder_button.setFont(QFont("Arial", 60))
+        self.hour_reminder.setFont(QFont("Arial", 40))
+        self.minute_reminder.setFont(QFont("Arial", 40))
+        self.ampm_reminder.setFont(QFont("Arial", 40))        
         self.start_button.setFont(QFont("Arial", 60))
         self.stop_button.setFont(QFont("Arial", 60))
         self.reset_button.setFont(QFont("Arial", 60))
@@ -201,9 +244,13 @@ class DigitalClock(QWidget):
         tablayout3.setRowStretch(0 , 0)
         tablayout3.setRowStretch(1, 0)   
         tablayout3.setRowStretch(2, 0) 
-        tablayout3.setRowStretch(3, 0)                  
+        tablayout3.setRowStretch(3, 0)  
 
-   
+        # tablayout4.setRowStretch(0 , 0)                
+        # tablayout4.setRowStretch(1 , 0)      
+        # tablayout4.setRowStretch(2 , 0)      
+        # tablayout4.setRowStretch(3 , 0)    
+        # tablayout4.setRowStretch(4 , 0)        
         
         font_id = QFontDatabase.addApplicationFont("DS-DIGIT.TTF")
         font_faimly = QFontDatabase.applicationFontFamilies(font_id)[0]
