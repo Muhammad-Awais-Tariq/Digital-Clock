@@ -4,16 +4,20 @@ from PyQt5.QtWidgets import QApplication , QWidget , QLabel , QGridLayout , QPus
 from PyQt5.QtCore import  QTimer , Qt , QTime
 from PyQt5.QtGui import QFont , QFontDatabase , QIcon
 import pygame
+from win10toast import ToastNotifier
+
 
 
 class DigitalClock(QWidget):
     def __init__(self):
         super().__init__()
+        self.notifier = ToastNotifier()
         self.clock_timer = QTimer(self)
         self.stopwatch_timer = QTimer(self)
         self.time = QTime(0 , 0 , 0 , 0 )
         self.hour_box = QComboBox()
         self.alarm_time = None
+        self.reminder_time = None
        
         self.minute_box = QComboBox()
         self.ampm_box = QComboBox()
@@ -45,6 +49,8 @@ class DigitalClock(QWidget):
         self.tabs.addTab(self.tab3, "Alarm")
         self.tabs.addTab(self.tab4, "Reminder")
         self.initUI()
+
+
 
 
     def initUI(self):
@@ -245,12 +251,7 @@ class DigitalClock(QWidget):
         tablayout3.setRowStretch(1, 0)   
         tablayout3.setRowStretch(2, 0) 
         tablayout3.setRowStretch(3, 0)  
-
-        # tablayout4.setRowStretch(0 , 0)                
-        # tablayout4.setRowStretch(1 , 0)      
-        # tablayout4.setRowStretch(2 , 0)      
-        # tablayout4.setRowStretch(3 , 0)    
-        # tablayout4.setRowStretch(4 , 0)        
+    
         
         font_id = QFontDatabase.addApplicationFont("DS-DIGIT.TTF")
         font_faimly = QFontDatabase.applicationFontFamilies(font_id)[0]
@@ -263,6 +264,7 @@ class DigitalClock(QWidget):
         self.stopwatch_timer.timeout.connect(self.update_display)
         self.set_alarm.clicked.connect(self.setting_alarm)
         self.stop_alarm.clicked.connect(self.stopsound)
+        self.set_reminder_button.clicked.connect(self.settingreminder)
 
         pygame.mixer.init()
         self.sound = pygame.mixer.Sound("Alarm-sound.wav")
@@ -296,18 +298,45 @@ class DigitalClock(QWidget):
         ampm = self.ampm_box.currentText()
         self.alarm_time = f"{hours:02}:{minutes:02}:00 {ampm}"            
 
-
     def updatetime(self):
-        self.current = datetime.now().strftime("%I:%M:%S %p")
-        self.time_label.setText(self.current)
-        if self.alarm_time and self.current == self.alarm_time:
-            self.sound.play()
+        now = datetime.now()
+
+        self.current = now.strftime("%I:%M %p")              
+        self.time_label.setText(now.strftime("%I:%M:%S %p"))
+
+            
+        if self.alarm_time and now.strftime("%I:%M:%S %p") == self.alarm_time:
+                self.sound.play()
+        
+        if self.reminder_time and not getattr(self, "reminder_fired", False):
+            reminder_str = now.strftime("%I:%M:00 %p")
+            if reminder_str == self.reminder_time:
+                try:
+                    self.notifier.show_toast(
+                        "Reminder",
+                        self.text,
+                        duration=10,
+                        threaded=True,
+                        icon_path="Reminder-image.ico"
+                    )
+                except Exception as e:
+                    print("Notification failed:", e)
+
+                self.reminder_fired = True
 
     def stopsound(self):
         self.sound.stop()
 
 
-        
+    def settingreminder(self):
+        remider_hours = self.hour_reminder.currentText()
+        remider_minutes = self.minute_reminder.currentText()
+        reminder_ampm = self.ampm_reminder.currentText()
+        self.reminder_time = f"{remider_hours:02}:{remider_minutes:02}:00 {reminder_ampm}"  
+        self.text = self.line_edit.text()
+        self.line_edit.setText("")
+        self.reminder_fired = False  
+                
 
 
 
